@@ -1,25 +1,27 @@
-import logo from './logo.svg';
+import React, { Suspense, useState } from 'react';
 import './App.css';
 
-function App() {
+const WeatherDisplay = React.lazy(() => import('./Components/WeatherDisplay'));
+const WeatherForecast = React.lazy(() => import('./Components/WeatherForecast.js'));
+const CityForm = React.lazy(() => import('./Components/CityForm.js'));
+
+const App = () => {
+  const [city, setCity] = useState(null);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Weather Dashboard</h1>
+      <Suspense fallback={<div>Loading form...</div>}>
+        <CityForm onCityChange={setCity} />
+      </Suspense>
+      {city && (
+        <Suspense fallback={<div>Loading weather...</div>}>
+          <WeatherDisplay city={city} />
+          <WeatherForecast city={city} />
+        </Suspense>
+      )}
     </div>
   );
-}
+};
 
 export default App;
